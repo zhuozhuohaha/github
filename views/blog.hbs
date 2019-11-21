@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>博客一览</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #606c71;
+        }
+        .div-parent{
+
+            width: 50%;
+            margin:0 auto;
+        }
+        .project-tagline{
+            margin-bottom: 0rem;
+            color: #333333;
+            font-weight: normal;
+            opacity: 0.7
+        }
+
+        .span-style{
+
+            color: #606c71;
+            font-size: 12px;
+        }
+        a {
+            color: #1e6bb8;
+            text-decoration: none;
+            background-color: transparent
+        }
+
+
+        a:hover {
+            text-decoration: underline
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div class="div-parent">
+    <a href="bind">绑定博客</a>
+    <a href="up">刷新博客</a>
+    <div id="blog">
+        {{#each blog}}
+            <a href=http://{{{url}}}:3000>{{owner}}/{{repo}}</a>
+            <p class="project-tagline">{{intr}}</p>
+            <span class="span-style">更新时间：{{time}}</span>
+            <HR style="FILTER:progid:DXImageTransform.Microsoft.Shadow(color:#987cb9,direction:145,strength:15)"width="80%" color=#eff0f1 SIZE=1>
+        {{/each}}
+    </div>
+</div>
+
+
+</body>
+</html>

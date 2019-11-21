@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from "path";
 
 var passport = require('passport');
 var GitHubStrategy = require('passport-github').Strategy;
@@ -17,7 +18,8 @@ async function bootstrap() {
     },
   ));
   app.use(passport.initialize());
-  app.enableCors();
+  app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.setViewEngine('hbs');
   await app.listen(3000);
 }
 

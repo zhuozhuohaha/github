@@ -1,29 +1,45 @@
-import { Body, Controller, Get, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Render, Req, Res, UseGuards } from '@nestjs/common';
 import { RedisService } from 'nestjs-redis';
 import { join } from 'path';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 import { AppService } from './app.service';
 import { Test } from './test.entity';
+import { Blog } from './blog.entity';
 
 @Controller()
 export class AppController {
   constructor(private readonly redisService: RedisService, private readonly appService: AppService) {
   }
 
-  @Post('/api/bind')
-  async bind(@Req() req: Request, @Body('owner') owner: string, @Body('repo') repo: string, @Body('url') host: string) {
+  @Post('/api/blog/bind')
+  async bind(@Res() res:Response,@Req() req: Request, @Body('owner') owner: string, @Body('repo') repo: string, @Body('url') host: string) {
     let url = join(owner, repo);
     let token = (<any> req).session.user;
     if (token && (await this.appService.getRepos(token, owner, repo)).data.permissions.push) {
       await this.redisService.getClient().set(host, url);
-      this.appService.buildPage(owner, repo);
-      return 'ok';
+      let b  = new Blog();
+      b.owner  = owner;
+      b.repo = repo;
+      b.url = host;
+      b.time = new Date().toLocaleDateString();
+      this.appService.buildPage(owner, repo,b);
+      res.redirect('/blog');
     } else {
       return '';
     }
   }
-
+  @Post('/api/blog/up')
+  async update1(@Res() res:Response,@Req() req: Request, @Body('owner') owner: string, @Body('repo') repo: string) {
+    let url = join(owner, repo);
+    let token = (<any> req).session.user;
+    if (token && (await this.appService.getRepos(token, owner, repo)).data.permissions.push) {
+      this.appService.upPage(owner, repo);
+      res.redirect('/blog');
+    } else {
+      return '';
+    }
+  }
   @Post('/api/list')
   async list(@Req() req: Request, @Body('owner') owner: string, @Body('repo') repo: string, @Body('path') path: string) {
     let token = (<any> req).session.user;
@@ -65,13 +81,30 @@ export class AppController {
   login(@Req() req: Request) {
   }
 
+  @Get('/up')
+  @Render('up')
+  up(@Req() req: Request) {
+  }
   @Get()
-  async index(@Res() res: Response) {
-    res.sendFile(join(__dirname, '..', 'public', 'index.html'), (err) => {
-      if (err) {
-        throw 404;
-      }
-    });
+  @Render('index')
+  async index(@Req() req: Request,@Res() res: Response) {
+    let token = (<any> req).session.user;
+    if (token)
+    return ({user:(await this.appService.getAuthenticated(token)).data.name});
+    else {
+      return ;
+    }
+  }
+
+  @Get('/blog')
+  @Render('blog')
+  async blog(@Req() req: Request,@Res() res: Response) {
+    return {blog:await this.appService.getBlogList()}
+  }
+
+  @Get('/bind')
+  @Render('bind')
+  async bind1(@Req() req: Request,@Res() res: Response) {
   }
 
   @Post('/api/test')

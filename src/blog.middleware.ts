@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { RedisService } from 'nestjs-redis';
 import { join } from 'path';
@@ -16,11 +16,12 @@ export class BlogMiddleware implements NestMiddleware {
     if (url) {
       let p = join(__dirname, '..', 'public', url, 'public', req.url);
       p = p.split('?')[0];
-      if (p.split('.').length<2)
-        p+='/index.html';
+      if (p.split('.').length < 2) {
+        p += '/index.html';
+      }
       res.sendFile(p, (err) => {
-        if (err){
-          console.log('404');
+        if (err) {
+          console.log('404' + p);
           res.send('404');
         }
       });

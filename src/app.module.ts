@@ -6,6 +6,7 @@ import { BlogMiddleware } from './blog.middleware';
 import { ExpressSessionMiddleware } from '@nest-middlewares/express-session';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Test } from './test.entity';
+import { Blog } from './blog.entity';
 
 var redis = require('redis');
 var session = require('express-session');
@@ -22,7 +23,7 @@ var RedisStore = require('connect-redis')(session);
     username: 'root',
     password: 'Jihuayu123',
     database: 'test',
-    entities: [Test],
+    entities: [Test,Blog],
     synchronize: true,
   }),],
   controllers: [AppController],

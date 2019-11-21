@@ -1,5 +1,6 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as path from 'path';
+import { Blog } from './blog.entity';
 
 const Octokit = require('@octokit/rest');
 const { exec } = require('child_process');
@@ -19,21 +20,24 @@ export class AppService {
     });
   }
 
-  async buildPage(owner: string, repo: string, themes: string = undefined) {
+  async buildPage(owner: string, repo: string, b:Blog,themes: string = undefined) {
     let p = path.join(__dirname, '..', 'public', owner);
 
     await exec(`mkdir -p ${p}`, (err, stdout, stderr) => {
       if (err) {
-
-      }
-      else{
+        console.log(err)
+      } else {
         exec(`git clone https://github.com/${owner}/${repo}`, { cwd: p }, (err, stdout, stderr) => {
           if (err) {
-          }
-          else{
-            exec(` yarn && npx hexo g`, { cwd: path.join(p,repo) }, (err, stdout, stderr) => {
-              if (err) {
+            console.log(err)
 
+          } else {
+            exec(` yarn && npx hexo g`, { cwd: path.join(p, repo) }, (err, stdout, stderr) => {
+              if (err) {
+                console.log(err)
+
+              } else {
+                b.save();
               }
             });
           }
@@ -53,6 +57,29 @@ export class AppService {
     //     }
     //   });
     // }
+
+    return;
+  }
+
+  async upPage(owner: string, repo: string, themes: string = undefined) {
+    let b = await Blog.findOne({owner,repo});
+    let p = path.join(__dirname, '..', 'public', owner,repo);
+    exec(`git pull`, { cwd: p }, (err, stdout, stderr) => {
+      if (err) {
+        console.log(err)
+
+      } else {
+        exec(` yarn && npx hexo g`, { cwd: p}, (err, stdout, stderr) => {
+          if (err) {
+            console.log(err)
+
+          } else {
+            b.time = new Date().toLocaleDateString();
+            b.save();
+          }
+        });
+      }
+    });
 
     return;
   }
@@ -89,6 +116,11 @@ export class AppService {
     const octokit = new Octokit({
       auth: `token ${token}`,
     });
-    return await octokit.users.getAuthenticated();
+    return (await octokit.users.getAuthenticated());
+  }
+
+  async getBlogList(): Promise<any> {
+
+    return (await Blog.find());
   }
 }
