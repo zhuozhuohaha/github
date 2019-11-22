@@ -2,7 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from "path";
-
+import * as path from 'path';
+var favicon = require('serve-favicon');
 var passport = require('passport');
 var GitHubStrategy = require('passport-github').Strategy;
 
@@ -20,6 +21,8 @@ async function bootstrap() {
   app.use(passport.initialize());
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('hbs');
+  app.useStaticAssets(path.join(__dirname,'..','res'));
+  app.use(favicon(path.join(__dirname,'..','res','favicon.ico')));
   await app.listen(3000);
 }
 

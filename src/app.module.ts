@@ -7,6 +7,8 @@ import { ExpressSessionMiddleware } from '@nest-middlewares/express-session';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Test } from './test.entity';
 import { Blog } from './blog.entity';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 var redis = require('redis');
 var session = require('express-session');

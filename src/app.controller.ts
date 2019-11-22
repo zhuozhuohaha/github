@@ -107,6 +107,19 @@ export class AppController {
   async bind1(@Req() req: Request,@Res() res: Response) {
   }
 
+  @Get('/test')
+  @Render('test')
+  async test(@Req() req: Request,@Res() res: Response) {
+    let token = (<any> req).session.user;
+    if (token){
+      let ans = (await this.appService.getAuthenticated(token)).data.name;
+      return {test:await Test.find({name:ans})}
+    }
+    else {
+      return ;
+    }
+  }
+
   @Post('/api/test')
   async pass(@Query('token')token:string,@Query('id')id:number) {
     let b = new Test();
@@ -135,6 +148,7 @@ export class AppController {
 
   @Get('/**')
   async all() {
+
     return '';
   }
 
