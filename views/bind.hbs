@@ -39,11 +39,6 @@
     <a href="blog" class="btn">博客</a>
     <a href="edit" class="btn">编辑器</a>
     <a href="test" class="btn">评测</a>
-    {{#if user}}
-        <a class="btn">{{user}}</a>
-    {{else}}
-        <a href="login" class="btn">用GitHub账号登录</a>
-    {{/if}}
 
 </section>
 <br><br>
@@ -54,6 +49,10 @@
         &nbsp;&nbsp;Url: &nbsp;&nbsp;&nbsp;&nbsp;<input type="text" name="url" /><br><br><br>
         <input type="submit" value="Submit" /><br>
     </form>
+    <p>
+        立刻上传你的<a href="https://hexo.io/zh-cn/">HEXO项目</a>，开始部署你的网页。<br>
+        填上你hexo项目的地址，和要绑定的地址，即可开始。
+    </p>
 </div>
 </body>
 </html>
