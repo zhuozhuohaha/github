@@ -107,7 +107,10 @@ export class AppController {
       return ;
     }
   }
-
+  @Get('/code')
+  @Render('code')
+  async code(@Req() req: Request,@Res() res: Response) {
+  }
   @Get('/bind')
   @Render('bind')
   async bind1(@Req() req: Request,@Res() res: Response) {
