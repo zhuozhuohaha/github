@@ -29,6 +29,7 @@ export class AppController {
       return '';
     }
   }
+
   @Post('/api/blog/up')
   async update1(@Res() res:Response,@Req() req: Request, @Body('owner') owner: string, @Body('repo') repo: string) {
     let url = join(owner, repo);
@@ -99,7 +100,12 @@ export class AppController {
   @Get('/blog')
   @Render('blog')
   async blog(@Req() req: Request,@Res() res: Response) {
-    return {blog:await this.appService.getBlogList()}
+    let token = (<any> req).session.user;
+    if (token)
+      return ({user:(await this.appService.getAuthenticated(token)).data.name,blog:await this.appService.getBlogList()});
+    else {
+      return ;
+    }
   }
 
   @Get('/bind')
