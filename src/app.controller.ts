@@ -49,7 +49,21 @@ export class AppController {
     }
     return '';
   }
+  @Get('/editor')
+  async list1(@Res() res:Response,@Req() req: Request, @Query('url') url: string) {
+    let token = (<any> req).session.user;
+    let o = url.split('/');
+    if (token) {
+      let data = (await this.appService.list(token, o[3], o[4],o.slice(7).join('/'))).data;
+      if (data.length)
+        return res.render('file',{data:data});
+      else{
+        return res.render('editor',{data:data});
 
+      }
+    }
+    return '';
+  }
   @Post('/api/update')
   async update(@Req() req: Request, @Body('owner') owner: string, @Body('repo') repo: string, @Body('path') path: string,
                @Body('sha')sha: string, @Body('content')content: string, @Body('message')message: string) {

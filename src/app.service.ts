@@ -89,11 +89,11 @@ export class AppService {
     const octokit = new Octokit({
       auth: `token ${token}`,
     });
-    return await octokit.repos.getContents({
+    return (await octokit.repos.getContents({
       owner,
       repo,
       path,
-    });
+    }));
   }
 
   async createOrUpdateFile(token: string, owner: string, repo: string, path: string, message: string, sha: string, content: string): Promise<any> {

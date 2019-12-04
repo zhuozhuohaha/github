@@ -1,0 +1,61 @@
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+</head>
+
+<button id="button">保存到github</button>
+<div id="container" style="width:100%;height:100%;border:1px solid grey"></div>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.18.1/min/vs/loader.js"></script>
+<script>
+    require.config({paths: {'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.18.1/min/vs'}});
+    require.config({
+        'vs/nls' : {
+            availableLanguages: {
+                '*': 'zh-cn'
+            }
+        }
+    });
+    var editor;
+    // axios.get( document.URL.split('?')[0]+"?none=1").then(r=>{
+        require(['vs/editor/editor.main'], function () {
+            editor = monaco.editor.create(document.getElementById('container'), {
+                value:atob(`{{{data.content}}}`),
+                language: f(`{{{data.name}}}`.split('.').pop())
+            });
+        // });
+    });
+    function f(a) {
+        if (a==='js')return 'javascript';
+        if (a==='ts')return 'typescript';
+        if (a==='cs')return 'csharp';
+        if (a==='kt')return 'kotlin';
+        if (a==='md')return 'markdown';
+        return a;
+    }
+    function click() {
+      let url = getQueryVariable('url');
+        let o = url.split('/');
+        axios.post('/api/update',{owner:o[3],repo: o[4],path:o.slice(7).join('/'),sha:`{{data.sha}}`,content:btoa(editor.getValue()),message:'update'}).then(i=>{
+            alert('提交成功');
+            location.reload();
+        })
+    }
+    document.getElementById('button').addEventListener('click',click);
+    function getQueryVariable(variable)
+    {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            if(pair[0] === variable){return pair[1];}
+        }
+        return(false);
+    }
+</script>
+
+</body>
+
+</html>
