@@ -52,6 +52,8 @@ export class AppController {
   @Get('/editor')
   async list1(@Res() res:Response,@Req() req: Request, @Query('url') url: string) {
     let token = (<any> req).session.user;
+    if (!url)
+      return res.render('editorBase');
     let o = url.split('/');
     if (token) {
       let data = (await this.appService.list(token, o[3], o[4],o.slice(7).join('/'))).data;
